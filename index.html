@@ -102,6 +102,14 @@
       line-height: 1.5;
     }
 
+    .hero-image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  display: block;
+  object-fit: cover;
+}
+
     .hero-placeholder,
     .graphic-placeholder {
       border: 1px dashed #cccccc;
@@ -169,24 +177,28 @@
 }
 
     @media (max-width: 800px) {
-      header {
-        padding: 0 16px;
-      }
+  header {
+    flex-direction: column;
+    height: auto;
+    padding: 12px 0;
+    gap: 8px;
+  }
 
-      .hero,
-      .section-grid,
-      .section-grid.reverse {
-        grid-template-columns: 1fr;
-      }
+  nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+  }
 
-      .logo img {
-        height: 40px;
-      }
- 
+.logo img {
+    height: 32px;
+    max-width: 120px; /* prevents wide logo */
+  }
+}
     
     
     
-    }
+
   </style>
 </head>
 <body>
@@ -198,7 +210,7 @@
 
     <nav>
       <a href="benchmarking.html">Benchmarking</a>
-      <a href="#visualisations.html">Visualisations</a>
+      <a href="insights.html">Insights</a>
       <a href="#decisions.html">Decisions db</a>
     </nav>
   </header>
@@ -210,15 +222,16 @@
     <section id="top">
       <div class="hero">
         <div>
-          <h1 class="hero-title">Evidence‑grounded benchmarking and decisions.</h1>
+          <h1 class="hero-title">Something inspiring about what we do</h1>
           <p class="hero-subtitle">
-            A clean, distraction‑free canvas that guides the eye in a Z‑pattern from logo to navigation,
-            then diagonally into the core content.
+            Something interesting about how we do it.  Needs to be short and not boring or too technical
           </p>
         </div>
         <div class="hero-placeholder">
-          Hero graphic placeholder
+          <img class="hero-image" src="Viz3.png" alt="Hero graphic">
+
         </div>
+      
       </div>
     </section>
     
@@ -232,7 +245,7 @@
     <section id="benchmarking">
       <div class="section-grid reverse">
         <div class="graphic-placeholder">
-          Benchmarking graphic placeholder
+          <img class="hero-image" src="benchmarkfs.png" alt="Hero graphic">
         </div>
         <div>
           <h2 class="section-title">Benchmarking</h2>
@@ -246,15 +259,15 @@
       </div>
     </section>
 
-    <section id="visualisations">
+    <section id="insights">
       <div class="section-grid">
         <div>
-          <h2 class="section-title">Visualisations</h2>
+          <h2 class="section-title">Insights</h2>
           <p class="section-text">
-            Placeholder text for the Visualisations page. Explain how charts, dashboards, and overlays
+            Placeholder text for the insights/research page. Explain how charts, dashboards, and overlays
             are composed.
           </p>
-        <a href="visualisations.html" class="section-button">Open Visualisations</a>
+        <a href="insights.html" class="section-button">Open Insights</a>
         
         </div>
         <div class="graphic-placeholder">
