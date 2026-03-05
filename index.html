@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>egdata – Landing</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #ffffff;
+      color: #111111;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      background: #ffffff;
+      z-index: 10;
+    }
+
+    /* LOGO — starts large, moves down, then shrinks and rises */
+    .logo {
+      transform-origin: top left;
+      transform: scale(3) translateY(20px);
+      transition: transform 0.25s ease-out;
+    }
+
+    .logo img {
+      height: 48px;
+      width: auto;
+    }
+
+    /* Spacer that prevents overlap */
+    #logo-spacer {
+      height: 0px;
+      transition: height 0.25s ease-out;
+    }
+
+    nav {
+      display: flex;
+      gap: 24px;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    main {
+      padding-top: 0px;
+    }
+
+    section {
+      min-height: auto;
+      padding: 24px 6vw;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    #top {
+      padding-top: 180px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: 32px;
+      align-items: center;
+    }
+
+    .hero-title {
+      font-size: clamp(2.4rem, 4vw, 3.4rem);
+      font-weight: 600;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+
+    .hero-subtitle {
+      font-size: 1.05rem;
+      max-width: 32rem;
+      line-height: 1.5;
+    }
+
+    .hero-placeholder,
+    .graphic-placeholder {
+      border: 1px dashed #cccccc;
+      border-radius: 8px;
+      min-height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      color: #777777;
+      text-align: center;
+      padding: 16px;
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 32px;
+      align-items: center;
+    }
+
+    .section-grid.reverse {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+      margin-bottom: 12px;
+    }
+
+    .section-text {
+      font-size: 0.98rem;
+      line-height: 1.6;
+      max-width: 32rem;
+    }
+   .scroll-divider {
+  width: 100%;
+  padding: 16px 0;
+  margin: 0;
+  text-align: center;
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #777;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+}
+
+.section-button {
+  display: inline-block;
+  margin-top: 16px;
+  padding: 10px 20px;
+  background: #111;
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: background 0.2s ease;
+}
+
+.section-button:hover {
+  background: #444;
+}
+
+    @media (max-width: 800px) {
+      header {
+        padding: 0 16px;
+      }
+
+      .hero,
+      .section-grid,
+      .section-grid.reverse {
+        grid-template-columns: 1fr;
+      }
+
+      .logo img {
+        height: 40px;
+      }
+ 
+    
+    
+    
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <img src="egdatared.svg" alt="egdata logo" />
+    </div>
+
+    <nav>
+      <a href="benchmarking.html">Benchmarking</a>
+      <a href="#visualisations.html">Visualisations</a>
+      <a href="#decisions.html">Decisions db</a>
+    </nav>
+  </header>
+
+  <div id="logo-spacer"></div>
+
+  <main>
+
+    <section id="top">
+      <div class="hero">
+        <div>
+          <h1 class="hero-title">Evidence‑grounded benchmarking and decisions.</h1>
+          <p class="hero-subtitle">
+            A clean, distraction‑free canvas that guides the eye in a Z‑pattern from logo to navigation,
+            then diagonally into the core content.
+          </p>
+        </div>
+        <div class="hero-placeholder">
+          Hero graphic placeholder
+        </div>
+      </div>
+    </section>
+    
+    <div class="scroll-divider">
+        <span>Scroll down for insights</span>
+    </div>
+
+
+
+
+    <section id="benchmarking">
+      <div class="section-grid reverse">
+        <div class="graphic-placeholder">
+          Benchmarking graphic placeholder
+        </div>
+        <div>
+          <h2 class="section-title">Benchmarking</h2>
+          <p class="section-text">
+            Placeholder text for the Benchmarking page. Describe how benchmarks are defined, compared,
+            and tracked over time.
+          </p>
+        <a href="benchmarking.html" class="section-button">Open Benchmarking</a>
+        
+        </div>
+      </div>
+    </section>
+
+    <section id="visualisations">
+      <div class="section-grid">
+        <div>
+          <h2 class="section-title">Visualisations</h2>
+          <p class="section-text">
+            Placeholder text for the Visualisations page. Explain how charts, dashboards, and overlays
+            are composed.
+          </p>
+        <a href="visualisations.html" class="section-button">Open Visualisations</a>
+        
+        </div>
+        <div class="graphic-placeholder">
+          Visualisations graphic placeholder
+        </div>
+      </div>
+    </section>
+
+    <section id="decisions-db">
+      <div class="section-grid reverse">
+        <div class="graphic-placeholder">
+          Decisions db graphic placeholder
+        </div>
+        <div>
+          <h2 class="section-title">Decisions db</h2>
+          <p class="section-text">
+            Placeholder text for the Decisions db page. Describe how decisions are recorded, linked to
+            evidence, and made auditable.
+          </p>
+        <a href="decisions.html" class="section-button">Open Decisions DB</a>
+        
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const logo = document.querySelector('.logo');
+    const spacer = document.getElementById('logo-spacer');
+    let ticking = false;
+
+    function updateLogo() {
+      const maxScroll = 200;
+      const scrollY = window.scrollY;
+      const progress = Math.min(scrollY / maxScroll, 1);
+
+      const scale = 4 - 3 * progress;
+      const translateY = 20 * (1 - progress); // move down when large
+
+      logo.style.transform = `scale(${scale}) translateY(${translateY}px)`;
+
+      const scaledHeight = 48 * scale;
+      const extra = Math.max(scaledHeight - 64, 0);
+
+      spacer.style.height = `${extra}px`;
+
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateLogo);
+        ticking = true;
+      }
+    });
+
+    updateLogo();
+  </script>
+
+</body>
+</html>

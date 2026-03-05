@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>egdata – Energy Benchmarking</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #ffffff;
+      color: #111111;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      background: #ffffff;
+      border-bottom: 1px solid #eee;
+      z-index: 10;
+    }
+
+    .logo img {
+      height: 48px;
+      width: auto;
+    }
+
+    nav {
+      display: flex;
+      gap: 24px;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    main {
+      padding-top: 96px;
+      padding-left: 6vw;
+      padding-right: 6vw;
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      margin-bottom: 24px;
+    }
+
+    /* VISUALISATION CONTAINER */
+    .viz-container {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 20px;
+      margin-top: 20px;
+      padding-bottom: 40px;
+    }
+
+    /* LEFT SIDEBAR */
+    #firmList {
+      border-right: 1px solid #ccc;
+      padding-right: 10px;
+    }
+
+    #firmHeaders {
+      display: grid;
+      grid-template-columns: 40px 1fr 40px;
+      font-size: 10px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .firm-item {
+      display: grid;
+      grid-template-columns: 40px 1fr 40px;
+      align-items: center;
+      margin-bottom: 6px;
+      font-size: 8px;
+      text-align: center;
+    }
+
+    .firm-item input[type="radio"],
+    .firm-item input[type="checkbox"] {
+      transform: scale(0.9);
+    }
+
+    /* CHART AREA */
+    .chart-row {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      gap: 0px;
+      overflow-x: auto;
+      padding-bottom: 20px;
+    }
+
+    .line-firm { stroke: #005EB8; stroke-width: 1.5; fill: none; }
+    .area-others { fill: #d8d8d8; }
+    .chart-title { font-size: 12px; font-weight: normal; text-anchor: middle; }
+
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="logo">
+      <a href="index.html">
+        <img src="egdatared.svg" alt="egdata logo" />
+      </a>
+    </div>
+
+    <nav>
+      <a href="benchmarking.html">Benchmarking</a>
+      <a href="visualisations.html">Visualisations</a>
+      <a href="decisions.html">Decisions db</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Energy Benchmarking</h1>
+
+    <div class="viz-container">
+
+      <!-- LEFT SIDEBAR -->
+      <div id="firmList">
+        <h3>Select firm</h3>
+
+        <div id="firmHeaders">
+          <div>Benchmark</div>
+          <div>Firm</div>
+          <div>Include<br>in avg</div>
+        </div>
+
+        <div id="firmOptions"></div>
+      </div>
+
+      <!-- CHARTS -->
+      <div>
+        <h2>Firm vs Sector Average – Energy Metrics</h2>
+        <div class="chart-row" id="charts"></div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- D3 SCRIPT (your full script, unchanged) -->
+  <script>
+
+function wrapText(text, width) {
+  text.each(function () {
+    const textEl = d3.select(this);
+    const words = textEl.text().split(/\s+/).reverse();
+    let line = [];
+    let lineNumber = 0;
+    const lineHeight = 1.1;
+    const y = textEl.attr("y");
+    const x = textEl.attr("x");
+
+    let tspan = textEl.text(null)
+      .append("tspan")
+      .attr("x", x)
+      .attr("y", y)
+      .attr("dy", "0em");
+
+    let word;
+    while ((word = words.pop())) {
+      line.push(word);
+      tspan.text(line.join(" "));
+      if (tspan.node().getComputedTextLength() > width) {
+        line.pop();
+        tspan.text(line.join(" "));
+        line = [word];
+        tspan = textEl.append("tspan")
+          .attr("x", x)
+          .attr("y", y)
+          .attr("dy", ++lineNumber * lineHeight + "em")
+          .text(word);
+      }
+    }
+  });
+}
+
+let benchmarkFirms = new Set();
+let currentFirm = null;
+
+d3.csv("energybenchmarking.csv").then(raw => {
+
+  const data = raw.map(d => ({
+    firm: d.Firm.trim(),
+    date: d.Period.trim(),
+    complaints: +d.Complaints,
+    disputes: +d["Disputes per 1m"],
+    ombudsman: +d["% of complainants who go to Ombudsman"] * 100,
+    signposting: d.Signposting === "" ? null : +d.Signposting * 100,
+    weeks8: +d["8 weeks"] * 100
+  }));
+
+  const metrics = [
+    { key: "complaints", label: "Complaints", format: d => d.toFixed(0) },
+    { key: "disputes", label: "Disputes per 1m", format: d => d.toFixed(2) },
+    { key: "ombudsman", label: "% complainants → Ombudsman", format: d => d.toFixed(2) + "%" },
+    { key: "signposting", label: "Signposting%", format: d => d == null ? "–" : d.toFixed(2) + "%" },
+    { key: "weeks8", label: "8 weeks%", format: d => d.toFixed(2) + "%" }
+  ];
+
+  const maxByMetric = {
+    complaints: d3.max(data, d => d.complaints),
+    disputes: d3.max(data, d => d.disputes),
+    ombudsman: d3.max(data, d => d.ombudsman),
+    signposting: d3.max(data.filter(d => d.signposting != null), d => d.signposting) || 1,
+    weeks8: d3.max(data, d => d.weeks8)
+  };
+
+  const firms = [...new Set(data.map(d => d.firm))].sort();
+
+  const firmOptions = d3.select("#firmOptions");
+
+  firms.forEach((f, i) => {
+    const row = firmOptions.append("div").attr("class", "firm-item");
+
+    const left = row.append("input")
+      .attr("type", "radio")
+      .attr("name", "firmChoice")
+      .attr("value", f)
+      .attr("id", "firm_left_" + i)
+      .property("checked", i === 0)
+      .on("change", function () {
+        currentFirm = this.value;
+
+        right.property("checked", false)
+             .property("disabled", true);
+        benchmarkFirms.delete(f);
+
+        d3.selectAll(".benchmark-box").each(function(dFirm) {
+          if (dFirm !== currentFirm) {
+            d3.select(this).property("disabled", false);
+          }
+        });
+
+        render(currentFirm);
+      });
+
+    row.append("label")
+      .attr("for", "firm_left_" + i)
+      .text(" " + f);
+
+    const right = row.append("input")
+      .attr("type", "checkbox")
+      .attr("class", "benchmark-box")
+      .attr("id", "firm_right_" + i)
+      .datum(f)
+      .property("disabled", i === 0)
+      .on("change", function () {
+        if (this.checked) benchmarkFirms.add(f);
+        else benchmarkFirms.delete(f);
+        render(currentFirm);
+      });
+  });
+
+  currentFirm = firms[0];
+
+  function buildSeries(metric, firm) {
+    const firmSeries = data
+      .filter(d => d.firm === firm && d[metric] != null)
+      .map(d => ({ date: d.date, value: d[metric] }));
+
+    const periods = firmSeries.map(d => d.date);
+
+    const others = periods.map(period => {
+      const rows = data.filter(d =>
+        d.date === period &&
+        d.firm !== firm &&
+        d[metric] != null &&
+        (benchmarkFirms.size === 0 || benchmarkFirms.has(d.firm))
+      );
+      return {
+        date: period,
+        value: rows.length ? d3.mean(rows, r => r[metric]) : null
+      };
+    });
+
+    const lastFirm = firmSeries[firmSeries.length - 1].value;
+    const lastOthers = others[others.length - 1].value;
+
+    const pctDiff = (lastOthers != null && lastOthers !== 0)
+      ? ((lastFirm - lastOthers) / lastOthers) * 100
+      : 0;
+
+    firmSeries.push({ date: "Final", value: lastFirm });
+    others.push({ date: "Final", value: lastOthers });
+
+    const allPeriods = [...periods, "Final"];
+
+    return { firmSeries, others, lastFirm, pctDiff, allPeriods };
+  }
+
+  function drawChart(container, series, label, metricKey) {
+    const width = 120, height = 400;
+    const margin = { top: 35, right: 5, bottom: 15, left: 5 };
+    const innerWidth = width - margin.left - margin.right;
+    const innerHeight = height - margin.top - margin.bottom;
+
+    const svg = container.append("svg")
+      .attr("width", width)
+      .attr("height", height);
+
+    const g = svg.append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    const x = d3.scalePoint()
+      .domain(series.allPeriods)
+      .range([0, innerWidth])
+      .padding(0.5);
+
+    const y = d3.scaleLinear()
+      .domain([0, maxByMetric[metricKey]])
+      .nice()
+      .range([innerHeight, 0]);
+
+    const firmClean   = series.firmSeries.filter(d => d.value != null);
+    const othersClean = series.others.filter(d => d.value != null);
+
+    const area = d3.area()
+      .curve(d3.curveCatmullRom.alpha(0.5))
+      .x(d => x(d.date))
+      .y0(innerHeight)
+      .y1(d => y(d.value));
+
+    g.append("path")
+      .datum(firmClean)
+      .attr("fill", "orange")
+      .attr("opacity", 0.45)
+      .attr("d", area);
+
+    g.append("path")
+      .datum(othersClean)
+      .attr("class", "area-others")
+      .attr("d", area);
+
+    const line = d3.line()
+      .curve(d3.curveCatmullRom.alpha(0.5))
+      .x(d => x(d.date))
+      .y(d => y(d.value));
+
+    g.append("path")
+      .datum(firmClean)
+      .attr("class", "line-firm")
+      .attr("d", line);
+
+    const finalX = x("Final");
+    const finalY = y(series.lastFirm);
+    const pctColor = series.pctDiff >= 0 ? "green" : "red";
+
+    g.append("circle")
+      .attr("cx", finalX)
+      .attr("cy", finalY)
+      .attr("r", 5)
+      .attr("fill", "#005EB8");
+
+    const labelX = innerWidth - 4;
+
+    const valueLabelY = Math.max(14, Math.min(innerHeight - 24, finalY - 4)) - 30;
+    const pctLabelY   = Math.max(28, Math.min(innerHeight - 8,  finalY + 16)) - 30;
+
+    g.append("text")
+      .attr("x", labelX)
+      .attr("y", valueLabelY)
+      .attr("text-anchor", "end")
+      .style("font-size", "10px")
+      .text(metrics.find(m => m.key === metricKey).format(series.lastFirm));
+
+    g.append("text")
+      .attr("x", labelX)
+      .attr("y", pctLabelY)
+      .attr("text-anchor", "end")
+      .style("font-size", "12px")
+      .style("fill", pctColor)
+      .text(`${series.pctDiff >= 0 ? "+" : ""}${series.pctDiff.toFixed(1)}%`);
+
+    svg.append("text")
+      .attr("x", width / 2)
+      .attr("y", 18)
+      .attr("class", "chart-title")
+      .text(label)
+      .call(wrapText, width - 10);
+
+    g.append("text")
+      .attr("x", 0)
+      .attr("y", innerHeight + 12)
+      .attr("fill", "#888")
+      .style("font-size", "11px")
+      .text(series.allPeriods[0]);
+
+    g.append("text")
+      .attr("x", innerWidth)
+      .attr("y", innerHeight + 12)
+      .attr("text-anchor", "end")
+      .attr("fill", "#888")
+      .style("font-size", "11px")
+      .text(series.allPeriods[series.allPeriods.length - 2]);
+  }
+
+  function render(firm) {
+    const container = d3.select("#charts");
+    container.html("");
+
+    metrics.forEach(m => {
+      const series = buildSeries(m.key, firm);
+      drawChart(container, series, m.label, m.key);
+    });
+  }
+
+  render(currentFirm);
+
+});
+  </script>
+
+</body>
+</html>
