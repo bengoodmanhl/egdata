@@ -179,7 +179,6 @@ h1 {
 svg {
   max-width: 100%;
   height: auto;
-  /* opacity removed to prevent charts being hidden */
 }
 
 /* -------------------------------------------------- */
@@ -201,11 +200,19 @@ svg {
     margin-bottom: 12px;
   }
 
-  /* Charts auto-fit screen width */
+  /* FORCE ALL CHARTS INTO ONE ROW */
+  .chart-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;      /* prevents wrapping */
+    overflow-x: auto;
+    gap: 12px;
+  }
+
   .chart-row svg {
-    width: 22vw !important;   /* 5 charts ≈ 110vw, scrollable */
+    flex: 0 0 auto;         /* critical: prevents wrapping */
+    width: 22vw !important; /* 5 charts ≈ 110vw */
     max-width: 140px;
-    /* height:auto !important removed to prevent collapse */
   }
 
   /* Keep chart titles readable */
