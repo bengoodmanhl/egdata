@@ -68,7 +68,7 @@ h1 {
 }
 
 /* -------------------------------------------------- */
-/* VISUALISATION LAYOUT */
+/* VISUALISATION CONTAINER */
 /* -------------------------------------------------- */
 
 .viz-container {
@@ -80,7 +80,7 @@ h1 {
 }
 
 /* -------------------------------------------------- */
-/* SIDEBAR */
+/* LEFT SIDEBAR */
 /* -------------------------------------------------- */
 
 #firmList {
@@ -103,12 +103,6 @@ h1 {
   margin-bottom: 6px;
   font-size: 8px;
   text-align: center;
-  padding: 2px 0;
-}
-
-.firm-item:hover {
-  background: #f2f2f2;
-  cursor: pointer;
 }
 
 .firm-item input[type="radio"],
@@ -117,33 +111,32 @@ h1 {
 }
 
 /* -------------------------------------------------- */
-/* CHART ROW */
+/* CHART AREA */
 /* -------------------------------------------------- */
 
 .chart-row {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  gap: 12px;
+  gap: 0px;
   overflow-x: auto;
   padding-bottom: 20px;
 }
 
+/* Let each chart be a fixed-width flex item in the row */
 .chart-row svg {
-  flex-shrink: 0;
-  max-width: 100%;
-  height: auto;
+  flex: 0 0 auto; /* stay in one row, no stretching */
 }
 
 /* Chart styling */
 .line-firm {
-  stroke: #c4473a;
+  stroke: #005EB8;
   stroke-width: 1.5;
   fill: none;
 }
 
 .area-others {
-  fill: #e8d8c2;
+  fill: #d8d8d8;
 }
 
 .chart-title {
@@ -173,26 +166,16 @@ h1 {
 }
 
 /* -------------------------------------------------- */
-/* SVG BEHAVIOUR */
-/* -------------------------------------------------- */
-
-svg {
-  max-width: 100%;
-  height: auto;
-}
-
-/* -------------------------------------------------- */
-/* MOBILE LAYOUT */
+/* MOBILE RESPONSIVE */
 /* -------------------------------------------------- */
 
 @media (max-width: 600px) {
 
-  /* Collapse to one column: sidebar above charts */
+  /* Stack sidebar above charts */
   .viz-container {
     grid-template-columns: 1fr;
   }
 
-  /* Sidebar becomes top block */
   #firmList {
     border-right: none;
     border-bottom: 1px solid #ccc;
@@ -200,22 +183,20 @@ svg {
     margin-bottom: 12px;
   }
 
-  /* FORCE ALL CHARTS INTO ONE ROW */
+  /* Keep charts in a single horizontal row */
   .chart-row {
     display: flex;
     flex-direction: row;
-    flex-wrap: nowrap;      /* prevents wrapping */
+    flex-wrap: nowrap;
     overflow-x: auto;
-    gap: 12px;
+    gap: 8px;
   }
 
+  /* Scale charts down on mobile while keeping them in one row */
   .chart-row svg {
-    flex: 0 0 auto;         /* critical: prevents wrapping */
-    width: 22vw !important; /* 5 charts ≈ 110vw */
-    max-width: 140px;
+    flex: 0 0 22vw; /* ~5 charts across, scrollable */
   }
 
-  /* Keep chart titles readable */
   .chart-title {
     font-size: 10px;
   }
