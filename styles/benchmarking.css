@@ -1,3 +1,7 @@
+/* -------------------------------------------------- */
+/* RESET & BASE TYPOGRAPHY */
+/* -------------------------------------------------- */
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -8,6 +12,7 @@ body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   background: #ffffff;
   color: #111111;
+  line-height: 1.45;
 }
 
 a {
@@ -18,6 +23,10 @@ a {
 a:hover {
   text-decoration: underline;
 }
+
+/* -------------------------------------------------- */
+/* HEADER */
+/* -------------------------------------------------- */
 
 header {
   position: fixed;
@@ -58,7 +67,10 @@ h1 {
   margin-bottom: 24px;
 }
 
-/* VISUALISATION CONTAINER */
+/* -------------------------------------------------- */
+/* VISUALISATION LAYOUT */
+/* -------------------------------------------------- */
+
 .viz-container {
   display: grid;
   grid-template-columns: 260px 1fr;
@@ -67,7 +79,10 @@ h1 {
   padding-bottom: 40px;
 }
 
-/* LEFT SIDEBAR */
+/* -------------------------------------------------- */
+/* SIDEBAR */
+/* -------------------------------------------------- */
+
 #firmList {
   border-right: 1px solid #ccc;
   padding-right: 10px;
@@ -88,6 +103,12 @@ h1 {
   margin-bottom: 6px;
   font-size: 8px;
   text-align: center;
+  padding: 2px 0;
+}
+
+.firm-item:hover {
+  background: #f2f2f2;
+  cursor: pointer;
 }
 
 .firm-item input[type="radio"],
@@ -95,16 +116,26 @@ h1 {
   transform: scale(0.9);
 }
 
-/* CHART AREA */
+/* -------------------------------------------------- */
+/* CHART ROW */
+/* -------------------------------------------------- */
+
 .chart-row {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  gap: 0px;
+  gap: 12px;
   overflow-x: auto;
   padding-bottom: 20px;
 }
 
+.chart-row svg {
+  flex-shrink: 0;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Chart styling */
 .line-firm {
   stroke: #c4473a;
   stroke-width: 1.5;
@@ -121,7 +152,10 @@ h1 {
   text-anchor: middle;
 }
 
+/* -------------------------------------------------- */
 /* INTERPRETATION BLOCK */
+/* -------------------------------------------------- */
+
 .interpretation-block {
   margin-top: 16px;
   padding: 12px 16px;
@@ -139,32 +173,43 @@ h1 {
 }
 
 /* -------------------------------------------------- */
-/* 📱 MOBILE RESPONSIVE CHART SCALING (KEEP ONE ROW) */
+/* SVG BEHAVIOUR */
 /* -------------------------------------------------- */
 
-/* Allow SVGs to shrink proportionally */
 svg {
   max-width: 100%;
   height: auto;
+  /* opacity removed to prevent charts being hidden */
 }
+
+/* -------------------------------------------------- */
+/* MOBILE LAYOUT */
+/* -------------------------------------------------- */
 
 @media (max-width: 600px) {
 
-  /* Keep charts in a single horizontal row */
-  .chart-row {
-    flex-direction: row;
-    overflow-x: auto;
-    gap: 12px;
-  }
-
-  /* Scale charts down on mobile */
-  .chart-row svg {
-    width: 90px !important;
-    height: auto !important;
-  }
-
-  /* Optional: shrink sidebar to give charts more room */
+  /* Collapse to one column: sidebar above charts */
   .viz-container {
-    grid-template-columns: 180px 1fr;
+    grid-template-columns: 1fr;
+  }
+
+  /* Sidebar becomes top block */
+  #firmList {
+    border-right: none;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+  }
+
+  /* Charts auto-fit screen width */
+  .chart-row svg {
+    width: 22vw !important;   /* 5 charts ≈ 110vw, scrollable */
+    max-width: 140px;
+    /* height:auto !important removed to prevent collapse */
+  }
+
+  /* Keep chart titles readable */
+  .chart-title {
+    font-size: 10px;
   }
 }
