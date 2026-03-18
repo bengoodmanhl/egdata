@@ -139,7 +139,7 @@ h1 {
 }
 
 /* -------------------------------------------------- */
-/* 📱 MOBILE RESPONSIVE CHART SCALING (ADDED SECTION) */
+/* 📱 MOBILE RESPONSIVE CHART SCALING (KEEP ONE ROW) */
 /* -------------------------------------------------- */
 
 /* Allow SVGs to shrink proportionally */
@@ -148,32 +148,23 @@ svg {
   height: auto;
 }
 
-/* Mobile layout adjustments */
 @media (max-width: 600px) {
 
-  /* Stack charts vertically instead of horizontal scrolling */
+  /* Keep charts in a single horizontal row */
   .chart-row {
-    flex-direction: column;
-    gap: 20px;
-    overflow-x: visible;
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 12px;
   }
 
-  /* Reduce chart size on mobile */
+  /* Scale charts down on mobile */
   .chart-row svg {
-    width: 100% !important;
+    width: 90px !important;
     height: auto !important;
   }
 
-  /* Make the grid collapse into a single column */
+  /* Optional: shrink sidebar to give charts more room */
   .viz-container {
-    grid-template-columns: 1fr;
-  }
-
-  /* Sidebar becomes full-width above charts */
-  #firmList {
-    border-right: none;
-    border-bottom: 1px solid #ccc;
-    padding-bottom: 20px;
-    margin-bottom: 20px;
+    grid-template-columns: 180px 1fr;
   }
 }
